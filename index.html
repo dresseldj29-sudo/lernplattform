@@ -1,0 +1,2915 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>LernRaum – Digitale Lernplattform</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --bg:#f4f7fb;
+    --card:#ffffff;
+    --text:#172033;
+    --muted:#718096;
+    --primary:#4f46e5;
+    --primary2:#7c3aed;
+    --border:#e5e7eb;
+    --danger:#ef4444;
+    --success:#10b981;
+    --shadow:0 15px 40px rgba(15,23,42,.08);
+}
+
+body.dark{
+    --bg:#0b1020;
+    --card:#121a2e;
+    --text:#f4f7ff;
+    --muted:#9aa7bd;
+    --border:#26324a;
+    --shadow:0 15px 40px rgba(0,0,0,.3);
+}
+
+body{
+    font-family:Inter,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    transition:.25s;
+}
+
+button,input,textarea,select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.hidden{
+    display:none!important;
+}
+
+/* LOGIN */
+
+#loginPage{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:
+        radial-gradient(circle at top left,#6366f1 0,transparent 35%),
+        radial-gradient(circle at bottom right,#8b5cf6 0,transparent 35%),
+        var(--bg);
+}
+
+.login-card{
+    width:100%;
+    max-width:460px;
+    background:rgba(255,255,255,.95);
+    border:1px solid rgba(255,255,255,.5);
+    border-radius:28px;
+    padding:38px;
+    box-shadow:0 30px 80px rgba(0,0,0,.18);
+}
+
+body.dark .login-card{
+    background:rgba(18,26,46,.96);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-weight:900;
+    font-size:25px;
+}
+
+.logo-icon{
+    width:48px;
+    height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:15px;
+    color:white;
+    background:linear-gradient(135deg,var(--primary),var(--primary2));
+    box-shadow:0 10px 25px rgba(79,70,229,.35);
+}
+
+.login-card h1{
+    margin-top:35px;
+    font-size:32px;
+}
+
+.login-card p{
+    color:var(--muted);
+    margin:10px 0 25px;
+}
+
+.form-group{
+    margin-bottom:16px;
+}
+
+label{
+    display:block;
+    font-weight:700;
+    margin-bottom:7px;
+    font-size:14px;
+}
+
+input,textarea,select{
+    width:100%;
+    padding:13px 15px;
+    border-radius:13px;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    outline:none;
+    transition:.2s;
+}
+
+input:focus,textarea:focus,select:focus{
+    border-color:var(--primary);
+    box-shadow:0 0 0 4px rgba(79,70,229,.1);
+}
+
+textarea{
+    min-height:120px;
+    resize:vertical;
+}
+
+.btn{
+    border:0;
+    border-radius:13px;
+    padding:12px 17px;
+    font-weight:800;
+    transition:.2s;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+}
+
+.btn-primary{
+    color:white;
+    background:linear-gradient(135deg,var(--primary),var(--primary2));
+}
+
+.btn-secondary{
+    color:var(--text);
+    background:var(--bg);
+    border:1px solid var(--border);
+}
+
+.btn-danger{
+    color:white;
+    background:var(--danger);
+}
+
+.btn-success{
+    color:white;
+    background:var(--success);
+}
+
+.full{
+    width:100%;
+}
+
+.login-info{
+    margin-top:20px;
+    padding:14px;
+    border-radius:14px;
+    background:var(--bg);
+    font-size:13px;
+    color:var(--muted);
+}
+
+/* APP */
+
+#app{
+    display:none;
+    min-height:100vh;
+}
+
+.layout{
+    display:flex;
+    min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:255px;
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    background:var(--card);
+    border-right:1px solid var(--border);
+    padding:22px 15px;
+    z-index:20;
+}
+
+.sidebar .logo{
+    padding:5px 10px 25px;
+}
+
+.nav{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+}
+
+.nav button{
+    border:0;
+    background:transparent;
+    color:var(--muted);
+    padding:13px;
+    text-align:left;
+    border-radius:13px;
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.nav button:hover,
+.nav button.active{
+    background:rgba(79,70,229,.1);
+    color:var(--primary);
+}
+
+.sidebar-bottom{
+    position:absolute;
+    left:15px;
+    right:15px;
+    bottom:20px;
+}
+
+/* MAIN */
+
+.main{
+    margin-left:255px;
+    width:calc(100% - 255px);
+    padding:25px;
+}
+
+.topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.topbar-left h2{
+    font-size:28px;
+}
+
+.topbar-left p{
+    color:var(--muted);
+    margin-top:4px;
+}
+
+.top-actions{
+    display:flex;
+    gap:8px;
+}
+
+.icon-btn{
+    width:44px;
+    height:44px;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    border-radius:13px;
+}
+
+/* PAGES */
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+/* CARDS */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:20px;
+    box-shadow:var(--shadow);
+}
+
+.stat{
+    position:relative;
+    overflow:hidden;
+}
+
+.stat-icon{
+    width:45px;
+    height:45px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(79,70,229,.1);
+    font-size:22px;
+    margin-bottom:15px;
+}
+
+.stat-number{
+    font-size:30px;
+    font-weight:900;
+}
+
+.stat-label{
+    color:var(--muted);
+    margin-top:3px;
+}
+
+.section{
+    margin-top:22px;
+}
+
+.section-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:15px;
+}
+
+.section-header h3{
+    font-size:20px;
+}
+
+.list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.list-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    padding:15px;
+    border:1px solid var(--border);
+    border-radius:15px;
+}
+
+.list-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.avatar{
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:13px;
+    background:linear-gradient(135deg,var(--primary),var(--primary2));
+    color:white;
+    font-weight:900;
+}
+
+.muted{
+    color:var(--muted);
+    font-size:14px;
+}
+
+/* HERO */
+
+.hero{
+    border-radius:24px;
+    padding:30px;
+    color:white;
+    background:
+        radial-gradient(circle at top right,rgba(255,255,255,.25),transparent 30%),
+        linear-gradient(135deg,#4f46e5,#7c3aed);
+    margin-bottom:22px;
+}
+
+.hero h1{
+    font-size:31px;
+    margin-bottom:8px;
+}
+
+.hero p{
+    opacity:.9;
+}
+
+/* TABLE */
+
+.table-wrap{
+    overflow:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:13px;
+    text-align:left;
+    border-bottom:1px solid var(--border);
+}
+
+th{
+    color:var(--muted);
+    font-size:13px;
+}
+
+/* BADGE */
+
+.badge{
+    display:inline-flex;
+    padding:5px 9px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:800;
+}
+
+.badge-green{
+    color:#047857;
+    background:#d1fae5;
+}
+
+.badge-purple{
+    color:#6d28d9;
+    background:#ede9fe;
+}
+
+.badge-blue{
+    color:#1d4ed8;
+    background:#dbeafe;
+}
+
+/* MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:100;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:100%;
+    max-width:600px;
+    max-height:90vh;
+    overflow:auto;
+    background:var(--card);
+    border-radius:24px;
+    padding:25px;
+    box-shadow:0 30px 80px rgba(0,0,0,.25);
+}
+
+.modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:20px;
+}
+
+.close{
+    border:0;
+    background:var(--bg);
+    color:var(--text);
+    width:38px;
+    height:38px;
+    border-radius:12px;
+}
+
+/* SCANNER */
+
+.scanner{
+    border:2px dashed var(--border);
+    min-height:300px;
+    border-radius:20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    overflow:hidden;
+}
+
+.scanner video{
+    width:100%;
+    max-height:400px;
+    object-fit:cover;
+}
+
+.scanner img{
+    max-width:100%;
+    max-height:400px;
+}
+
+/* AI */
+
+.ai-chat{
+    height:500px;
+    display:flex;
+    flex-direction:column;
+}
+
+.chat-messages{
+    flex:1;
+    overflow:auto;
+    padding:10px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.message{
+    max-width:80%;
+    padding:12px 15px;
+    border-radius:16px;
+    line-height:1.5;
+}
+
+.message.ai{
+    background:var(--bg);
+    align-self:flex-start;
+}
+
+.message.user{
+    color:white;
+    background:linear-gradient(135deg,var(--primary),var(--primary2));
+    align-self:flex-end;
+}
+
+.chat-input{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+}
+
+/* MOBILE */
+
+.mobile-menu{
+    display:none;
+}
+
+@media(max-width:1000px){
+    .grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:750px){
+    .sidebar{
+        transform:translateX(-100%);
+        transition:.25s;
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    .main{
+        margin-left:0;
+        width:100%;
+        padding:15px;
+    }
+
+    .mobile-menu{
+        display:block;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .topbar-left h2{
+        font-size:22px;
+    }
+
+    .hero h1{
+        font-size:25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div id="loginPage">
+
+<div class="login-card">
+
+<div class="logo">
+    <div class="logo-icon">🎓</div>
+    <span>LernRaum</span>
+</div>
+
+<h1>Willkommen zurück 👋</h1>
+
+<p>Melde dich an, um dein Klassenzimmer zu öffnen.</p>
+
+<div class="form-group">
+<label>E-Mail / Benutzername</label>
+<input id="loginUser" placeholder="z. B. Lehrer oder Max">
+</div>
+
+<div class="form-group">
+<label>Passwort</label>
+<input id="loginPassword" type="password" placeholder="Passwort">
+</div>
+
+<button class="btn btn-primary full" onclick="login()">
+    Anmelden
+</button>
+
+<div class="login-info">
+<strong>Demo-Zugänge</strong><br><br>
+👑 Admin: Leher@gmail.com<br>
+🔑 Passwort: HG10a<br><br>
+👨‍🏫 Lehrer: Lehrer<br>
+🔑 Passwort: lehrer123<br><br>
+👨‍🎓 Schüler: Schüler<br>
+🔑 Passwort: schueler123
+</div>
+
+</div>
+</div>
+
+
+<!-- APP -->
+
+<div id="app">
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar" id="sidebar">
+
+<div class="logo">
+<div class="logo-icon">🎓</div>
+<span>LernRaum</span>
+</div>
+
+<nav class="nav">
+
+<button onclick="showPage('dashboard',this)" class="active">
+🏠 Dashboard
+</button>
+
+<button id="navClass" onclick="showPage('class',this)">
+🏫 Meine Klasse
+</button>
+
+<button id="navMaterials" onclick="showPage('materials',this)">
+📚 Materialien
+</button>
+
+<button id="navTasks" onclick="showPage('tasks',this)">
+📝 Aufgaben
+</button>
+
+<button onclick="showPage('scanner',this)">
+📷 Scanner
+</button>
+
+<button onclick="showPage('ai',this)">
+🤖 Lern-KI
+</button>
+
+<button onclick="showPage('notes',this)">
+📒 Meine Notizen
+</button>
+
+<button id="navAdmin" onclick="showPage('admin',this)">
+👑 Administration
+</button>
+
+</nav>
+
+<div class="sidebar-bottom">
+<button class="btn btn-secondary full" onclick="logout()">
+    🚪 Abmelden
+</button>
+</div>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+<header class="topbar">
+
+<div class="topbar-left">
+
+<button class="icon-btn mobile-menu" onclick="toggleSidebar()">
+☰
+</button>
+
+<h2 id="pageTitle">Dashboard</h2>
+<p id="pageSubtitle">Deine Lernübersicht</p>
+
+</div>
+
+<div class="top-actions">
+<button class="icon-btn" onclick="toggleDark()">
+🌙
+</button>
+<div class="avatar" id="topAvatar">A</div>
+</div>
+
+</header>
+
+
+<!-- DASHBOARD -->
+
+<section id="dashboard" class="page active">
+
+<div class="hero">
+
+<h1 id="welcomeText">Hallo 👋</h1>
+
+<p>
+Willkommen in deinem digitalen Klassenzimmer.
+</p>
+
+</div>
+
+<div class="grid">
+
+<div class="card stat">
+<div class="stat-icon">📚</div>
+<div class="stat-number" id="statMaterials">0</div>
+<div class="stat-label">Materialien</div>
+</div>
+
+<div class="card stat">
+<div class="stat-icon">📝</div>
+<div class="stat-number" id="statTasks">0</div>
+<div class="stat-label">Aufgaben</div>
+</div>
+
+<div class="card stat">
+<div class="stat-icon">✅</div>
+<div class="stat-number" id="statDone">0</div>
+<div class="stat-label">Erledigt</div>
+</div>
+
+<div class="card stat">
+<div class="stat-icon">📒</div>
+<div class="stat-number" id="statNotes">0</div>
+<div class="stat-label">Notizen</div>
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="section-header">
+<h3>🚀 Schnellzugriff</h3>
+</div>
+
+<div class="grid">
+
+<div class="card" onclick="showPage('scanner')">
+<h3>📷 Arbeitsblatt scannen</h3>
+<p class="muted">Kamera öffnen und ein Arbeitsblatt aufnehmen.</p>
+<br>
+<button class="btn btn-primary">Scanner öffnen</button>
+</div>
+
+<div class="card" onclick="showPage('ai')">
+<h3>🤖 Lern-KI</h3>
+<p class="muted">Lass dir Aufgaben verständlich erklären.</p>
+<br>
+<button class="btn btn-primary">KI öffnen</button>
+</div>
+
+<div class="card" onclick="showPage('notes')">
+<h3>📒 Notizen</h3>
+<p class="muted">Eigene Gedanken und Lernnotizen speichern.</p>
+<br>
+<button class="btn btn-primary">Notizen öffnen</button>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- CLASS -->
+
+<section id="class" class="page">
+
+<div class="section-header">
+<h3>🏫 Meine Klasse</h3>
+
+<button id="teacherCreateClassBtn"
+class="btn btn-primary"
+onclick="openClassModal()">
++ Klasse erstellen
+</button>
+
+</div>
+
+<div id="classContent"></div>
+
+</section>
+
+
+<!-- MATERIALS -->
+
+<section id="materials" class="page">
+
+<div class="section-header">
+
+<h3>📚 Materialien</h3>
+
+<button id="teacherMaterialBtn"
+class="btn btn-primary"
+onclick="openMaterialModal()">
++ Material
+</button>
+
+</div>
+
+<div id="materialsList" class="list"></div>
+
+</section>
+
+
+<!-- TASKS -->
+
+<section id="tasks" class="page">
+
+<div class="section-header">
+
+<h3>📝 Aufgaben</h3>
+
+<button id="teacherTaskBtn"
+class="btn btn-primary"
+onclick="openTaskModal()">
++ Aufgabe
+</button>
+
+</div>
+
+<div id="tasksList" class="list"></div>
+
+</section>
+
+
+<!-- SCANNER -->
+
+<section id="scanner" class="page">
+
+<div class="card">
+
+<div class="section-header">
+<h3>📷 Arbeitsblatt-Scanner</h3>
+</div>
+
+<div class="scanner">
+
+<video id="camera" autoplay playsinline class="hidden"></video>
+
+<img id="scanImage" class="hidden">
+
+<div id="scannerStart">
+
+<div style="font-size:60px">📷</div>
+
+<h3>Arbeitsblatt aufnehmen</h3>
+
+<p class="muted">
+Nutze die Kamera deines Smartphones oder Tablets.
+</p>
+
+<br>
+
+<button class="btn btn-primary"
+onclick="startCamera()">
+Kamera starten
+</button>
+
+<br><br>
+
+<label class="btn btn-secondary">
+📁 Bild auswählen
+<input type="file"
+accept="image/*"
+capture="environment"
+style="display:none"
+onchange="loadImage(event)">
+</label>
+
+</div>
+
+</div>
+
+<br>
+
+<div id="cameraControls" class="hidden">
+
+<button class="btn btn-primary"
+onclick="takePhoto()">
+📸 Foto aufnehmen
+</button>
+
+<button class="btn btn-secondary"
+onclick="stopCamera()">
+Kamera schließen
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- AI -->
+
+<section id="ai" class="page">
+
+<div class="card">
+
+<div class="section-header">
+<div>
+<h3>🤖 Lern-KI</h3>
+<p class="muted">
+Dein digitaler Lernhelfer
+</p>
+</div>
+</div>
+
+<div class="ai-chat">
+
+<div id="chatMessages" class="chat-messages">
+
+<div class="message ai">
+👋 Hallo! Ich bin dein Lernhelfer.<br><br>
+Schreibe mir zum Beispiel:
+<br><br>
+„Erkläre mir Bruchrechnung einfach.“
+<br>
+„Was ist Photosynthese?“
+<br>
+„Wie löse ich eine Gleichung?“
+</div>
+
+</div>
+
+<div class="chat-input">
+
+<input id="aiInput"
+placeholder="Was möchtest du lernen?"
+onkeydown="if(event.key==='Enter')askAI()">
+
+<button class="btn btn-primary"
+onclick="askAI()">
+Senden
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- NOTES -->
+
+<section id="notes" class="page">
+
+<div class="section-header">
+
+<h3>📒 Meine Notizen</h3>
+
+<button class="btn btn-primary"
+onclick="openNoteModal()">
++ Notiz
+</button>
+
+</div>
+
+<div id="notesList" class="grid"></div>
+
+</section>
+
+
+<!-- ADMIN -->
+
+<section id="admin" class="page">
+
+<div class="hero">
+
+<h1>👑 Administration</h1>
+
+<p>
+Schulverwaltung und Lehrer-Verwaltung
+</p>
+
+</div>
+
+<div class="grid">
+
+<div class="card stat">
+<div class="stat-icon">👨‍🏫</div>
+<div class="stat-number" id="adminTeacherCount">0</div>
+<div class="stat-label">Lehrer</div>
+</div>
+
+<div class="card stat">
+<div class="stat-icon">🏫</div>
+<div class="stat-number" id="adminClassCount">0</div>
+<div class="stat-label">Klassen</div>
+</div>
+
+<div class="card stat">
+<div class="stat-icon">👨‍🎓</div>
+<div class="stat-number" id="adminStudentCount">0</div>
+<div class="stat-label">Schüler</div>
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="section-header">
+
+<h3>👨‍🏫 Lehrer verwalten</h3>
+
+<button class="btn btn-primary"
+onclick="openTeacherModal()">
++ Lehrer anlegen
+</button>
+
+</div>
+
+<div class="card">
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>Name</th>
+<th>Benutzername</th>
+<th>Passwort</th>
+<th>Aktion</th>
+</tr>
+</thead>
+
+<tbody id="teacherTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+</div>
+</div>
+
+
+<!-- MODAL -->
+
+<div class="modal" id="modal">
+
+<div class="modal-box">
+
+<div class="modal-header">
+
+<h2 id="modalTitle">Fenster</h2>
+
+<button class="close"
+onclick="closeModal()">
+✕
+</button>
+
+</div>
+
+<div id="modalContent"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   DATEN
+========================= */
+
+const defaultData = {
+
+users:[
+{
+id:"admin",
+name:"Administrator",
+username:"Leher@gmail.com",
+password:"HG10a",
+role:"admin"
+},
+{
+id:"teacher1",
+name:"Demo Lehrer",
+username:"Lehrer",
+password:"lehrer123",
+role:"teacher"
+},
+{
+id:"student1",
+name:"Demo Schüler",
+username:"Schüler",
+password:"schueler123",
+role:"student",
+classId:null
+}
+],
+
+classes:[],
+
+materials:[],
+
+tasks:[],
+
+notes:[]
+
+};
+
+
+let data =
+JSON.parse(localStorage.getItem("lernraumData"))
+|| defaultData;
+
+let currentUser = null;
+
+let cameraStream = null;
+
+
+/* =========================
+   SPEICHERN
+========================= */
+
+function save(){
+
+localStorage.setItem(
+"lernraumData",
+JSON.stringify(data)
+);
+
+}
+
+
+/* =========================
+   LOGIN
+========================= */
+
+function login(){
+
+const username =
+document.getElementById("loginUser").value.trim();
+
+const password =
+document.getElementById("loginPassword").value;
+
+const user =
+data.users.find(
+u =>
+u.username.toLowerCase()
+=== username.toLowerCase()
+&&
+u.password === password
+);
+
+if(!user){
+
+alert("❌ Benutzername oder Passwort ist falsch.");
+
+return;
+
+}
+
+currentUser = user;
+
+localStorage.setItem(
+"currentUser",
+user.id
+);
+
+document.getElementById("loginPage")
+.style.display="none";
+
+document.getElementById("app")
+.style.display="block";
+
+setupUser();
+
+}
+
+
+function setupUser(){
+
+const role=currentUser.role;
+
+document.getElementById("topAvatar")
+.textContent=
+currentUser.name
+.charAt(0)
+.toUpperCase();
+
+document.getElementById("welcomeText")
+.textContent=
+"Hallo "+currentUser.name+" 👋";
+
+document.getElementById("navAdmin")
+.style.display=
+role==="admin" ? "flex":"none";
+
+document.getElementById("navClass")
+.style.display=
+role==="admin" || role==="teacher" || role==="student"
+? "flex":"none";
+
+document.getElementById("teacherCreateClassBtn")
+.style.display=
+role==="teacher" || role==="admin"
+? "inline-flex":"none";
+
+document.getElementById("teacherMaterialBtn")
+.style.display=
+role==="teacher" || role==="admin"
+? "inline-flex":"none";
+
+document.getElementById("teacherTaskBtn")
+.style.display=
+role==="teacher" || role==="admin"
+? "inline-flex":"none";
+
+renderAll();
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+function logout(){
+
+currentUser=null;
+
+localStorage.removeItem("currentUser");
+
+document.getElementById("app")
+.style.display="none";
+
+document.getElementById("loginPage")
+.style.display="flex";
+
+document.getElementById("loginUser").value="";
+document.getElementById("loginPassword").value="";
+
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function showPage(id,button){
+
+document
+.querySelectorAll(".page")
+.forEach(p=>p.classList.remove("active"));
+
+document
+.getElementById(id)
+.classList.add("active");
+
+document
+.querySelectorAll(".nav button")
+.forEach(b=>b.classList.remove("active"));
+
+if(button)
+button.classList.add("active");
+
+const names={
+dashboard:["Dashboard","Deine Lernübersicht"],
+class:["Meine Klasse","Deine Klasse und Schüler"],
+materials:["Materialien","Lernmaterial deiner Klasse"],
+tasks:["Aufgaben","Deine Aufgaben"],
+scanner:["Arbeitsblatt-Scanner","Arbeitsblätter digitalisieren"],
+ai:["Lern-KI","Dein persönlicher Lernhelfer"],
+notes:["Meine Notizen","Deine persönlichen Notizen"],
+admin:["Administration","Schulverwaltung"]
+};
+
+document.getElementById("pageTitle")
+.textContent=names[id][0];
+
+document.getElementById("pageSubtitle")
+.textContent=names[id][1];
+
+if(window.innerWidth<750)
+document.getElementById("sidebar")
+.classList.remove("open");
+
+renderAll();
+
+}
+
+
+/* =========================
+   SIDEBAR
+========================= */
+
+function toggleSidebar(){
+
+document
+.getElementById("sidebar")
+.classList.toggle("open");
+
+}
+
+
+/* =========================
+   DARK MODE
+========================= */
+
+function toggleDark(){
+
+document.body.classList.toggle("dark");
+
+localStorage.setItem(
+"dark",
+document.body.classList.contains("dark")
+);
+
+}
+
+
+/* =========================
+   RENDER
+========================= */
+
+function renderAll(){
+
+renderStats();
+renderClass();
+renderMaterials();
+renderTasks();
+renderNotes();
+renderAdmin();
+
+}
+
+
+/* =========================
+   STATS
+========================= */
+
+function renderStats(){
+
+document.getElementById("statMaterials")
+.textContent=data.materials.length;
+
+document.getElementById("statTasks")
+.textContent=data.tasks.length;
+
+document.getElementById("statDone")
+.textContent=
+data.tasks.filter(t=>t.done).length;
+
+document.getElementById("statNotes")
+.textContent=data.notes.length;
+
+}
+
+
+/* =========================
+   KLASSEN
+========================= */
+
+function generateCode(length=6){
+
+const chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+let result="";
+
+for(let i=0;i<length;i++){
+
+result +=
+chars[Math.floor(Math.random()*chars.length)];
+
+}
+
+return result;
+
+}
+
+
+function openClassModal(){
+
+openModal(
+"🏫 Klasse erstellen",
+
+`
+
+<div class="form-group">
+<label>Name der Klasse</label>
+<input id="className"
+placeholder="z. B. 9a">
+</div>
+
+<div class="form-group">
+<label>Fach / Beschreibung</label>
+<input id="classSubject"
+placeholder="z. B. Allgemeine Fächer">
+</div>
+
+<button class="btn btn-primary full"
+onclick="createClass()">
+Klasse erstellen
+</button>
+
+`);
+
+}
+
+
+function createClass(){
+
+const name=
+document.getElementById("className").value.trim();
+
+const subject=
+document.getElementById("classSubject").value.trim();
+
+if(!name){
+
+alert("Bitte einen Klassennamen eingeben.");
+
+return;
+
+}
+
+const newClass={
+
+id:Date.now().toString(),
+
+name,
+
+subject,
+
+code:generateCode(),
+
+teacherId:currentUser.id,
+
+students:[]
+
+};
+
+data.classes.push(newClass);
+
+save();
+
+closeModal();
+
+renderAll();
+
+alert(
+"✅ Klasse erstellt!\n\nJoin-Code: "
++newClass.code
+);
+
+}
+
+
+function renderClass(){
+
+const container=
+document.getElementById("classContent");
+
+if(currentUser.role==="student"){
+
+const cls=
+data.classes.find(
+c=>c.students.includes(currentUser.id)
+);
+
+if(!cls){
+
+container.innerHTML=`
+
+<div class="card">
+
+<h3>🏫 Noch keiner Klasse beigetreten</h3>
+
+<p class="muted">
+Gib unten den Join-Code deiner Klasse ein.
+</p>
+
+<br>
+
+<div class="form-group">
+
+<input id="joinCode"
+placeholder="z. B. A7K92P">
+
+</div>
+
+<button class="btn btn-primary"
+onclick="joinClass()">
+Klasse beitreten
+</button>
+
+</div>
+
+`;
+
+return;
+
+}
+
+container.innerHTML=`
+
+<div class="hero">
+
+<h1>${escapeHTML(cls.name)}</h1>
+
+<p>${escapeHTML(cls.subject || "Klasse")}</p>
+
+<br>
+
+<strong>Klassen-Code: ${cls.code}</strong>
+
+</div>
+
+<div class="card">
+
+<h3>👥 Mitschüler</h3>
+
+<br>
+
+<div class="list">
+
+${
+cls.students.map(id=>{
+
+const u=data.users.find(x=>x.id===id);
+
+return u ?
+
+`<div class="list-item">
+<div class="list-left">
+<div class="avatar">
+${u.name.charAt(0)}
+</div>
+<div>
+<strong>${escapeHTML(u.name)}</strong>
+<div class="muted">Schüler</div>
+</div>
+</div>
+</div>`
+
+:"";
+
+}).join("")
+}
+
+</div>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+let classes;
+
+if(currentUser.role==="admin"){
+
+classes=data.classes;
+
+}else{
+
+classes=data.classes.filter(
+c=>c.teacherId===currentUser.id
+);
+
+}
+
+if(!classes.length){
+
+container.innerHTML=`
+
+<div class="card">
+
+<h3>🏫 Noch keine Klasse vorhanden</h3>
+
+<p class="muted">
+Erstelle deine erste Klasse.
+</p>
+
+</div>
+
+`;
+
+return;
+
+}
+
+container.innerHTML=
+
+classes.map(c=>`
+
+<div class="card" style="margin-bottom:15px">
+
+<div class="section-header">
+
+<div>
+
+<h3>🏫 ${escapeHTML(c.name)}</h3>
+
+<p class="muted">
+${escapeHTML(c.subject || "")}
+</p>
+
+</div>
+
+<span class="badge badge-purple">
+${c.code}
+</span>
+
+</div>
+
+<p>
+👥 ${c.students.length} Schüler
+</p>
+
+<br>
+
+<button class="btn btn-secondary"
+onclick="showStudents('${c.id}')">
+Schüler anzeigen
+</button>
+
+</div>
+
+`).join("");
+
+}
+
+
+function joinClass(){
+
+const code=
+document.getElementById("joinCode")
+.value
+.trim()
+.toUpperCase();
+
+const cls=
+data.classes.find(c=>c.code===code);
+
+if(!cls){
+
+alert("❌ Klasse nicht gefunden.");
+
+return;
+
+}
+
+if(!cls.students.includes(currentUser.id)){
+
+cls.students.push(currentUser.id);
+
+currentUser.classId=cls.id;
+
+const user=data.users.find(
+u=>u.id===currentUser.id
+);
+
+if(user)
+user.classId=cls.id;
+
+save();
+
+}
+
+renderClass();
+
+alert("✅ Du bist der Klasse beigetreten!");
+
+}
+
+
+/* =========================
+   SCHÜLER ANZEIGEN
+========================= */
+
+function showStudents(classId){
+
+const cls=
+data.classes.find(c=>c.id===classId);
+
+if(!cls)return;
+
+const students=
+cls.students
+.map(id=>data.users.find(u=>u.id===id))
+.filter(Boolean);
+
+openModal(
+"👥 Schüler – "+cls.name,
+
+`
+
+<div class="list">
+
+${
+students.length ?
+
+students.map(s=>`
+
+<div class="list-item">
+
+<div class="list-left">
+
+<div class="avatar">
+${s.name.charAt(0)}
+</div>
+
+<div>
+<strong>${escapeHTML(s.name)}</strong>
+<div class="muted">
+${escapeHTML(s.username)}
+</div>
+</div>
+
+</div>
+
+<span class="badge badge-green">
+Schüler
+</span>
+
+</div>
+
+`).join("")
+
+:
+
+`<p class="muted">
+Noch keine Schüler.
+</p>`
+
+}
+
+</div>
+
+<hr style="margin:20px 0;border-color:var(--border)">
+
+<h3>Schüler hinzufügen</h3>
+
+<br>
+
+<div class="form-group">
+<label>Name</label>
+<input id="studentName">
+</div>
+
+<div class="form-group">
+<label>Benutzername</label>
+<input id="studentUsername">
+</div>
+
+<div class="form-group">
+<label>Passwort</label>
+<input id="studentPassword"
+value="${generateCode(8)}">
+</div>
+
+<button class="btn btn-primary full"
+onclick="addStudent('${classId}')">
+Schüler anlegen
+</button>
+
+`);
+
+}
+
+
+function addStudent(classId){
+
+const name=
+document.getElementById("studentName")
+.value.trim();
+
+const username=
+document.getElementById("studentUsername")
+.value.trim();
+
+const password=
+document.getElementById("studentPassword")
+.value;
+
+if(!name || !username || !password){
+
+alert("Bitte alle Felder ausfüllen.");
+
+return;
+
+}
+
+if(data.users.some(
+u=>u.username.toLowerCase()
+===username.toLowerCase()
+)){
+
+alert("Dieser Benutzername existiert bereits.");
+
+return;
+
+}
+
+const student={
+
+id:Date.now().toString(),
+
+name,
+
+username,
+
+password,
+
+role:"student",
+
+classId
+
+};
+
+data.users.push(student);
+
+const cls=
+data.classes.find(c=>c.id===classId);
+
+cls.students.push(student.id);
+
+save();
+
+closeModal();
+
+renderAll();
+
+alert(
+"✅ Schüler angelegt!\n\n"
++"Benutzername: "+username+"\n"
++"Passwort: "+password
+);
+
+}
+
+
+/* =========================
+   MATERIALIEN
+========================= */
+
+function openMaterialModal(){
+
+openModal(
+"📚 Material hinzufügen",
+
+`
+
+<div class="form-group">
+<label>Titel</label>
+<input id="materialTitle"
+placeholder="z. B. Arbeitsblatt Mathematik">
+</div>
+
+<div class="form-group">
+<label>Beschreibung</label>
+<textarea id="materialDescription"
+placeholder="Beschreibung des Materials"></textarea>
+</div>
+
+<div class="form-group">
+<label>Fach</label>
+<input id="materialSubject"
+placeholder="Mathematik">
+</div>
+
+<button class="btn btn-primary full"
+onclick="createMaterial()">
+Material speichern
+</button>
+
+`);
+
+}
+
+
+function createMaterial(){
+
+const title=
+document.getElementById("materialTitle")
+.value.trim();
+
+const description=
+document.getElementById("materialDescription")
+.value.trim();
+
+const subject=
+document.getElementById("materialSubject")
+.value.trim();
+
+if(!title){
+
+alert("Bitte einen Titel eingeben.");
+
+return;
+
+}
+
+data.materials.push({
+
+id:Date.now().toString(),
+
+title,
+
+description,
+
+subject,
+
+created:new Date().toLocaleDateString("de-DE"),
+
+teacher:currentUser.name
+
+});
+
+save();
+
+closeModal();
+
+renderAll();
+
+}
+
+
+function renderMaterials(){
+
+const list=
+document.getElementById("materialsList");
+
+if(!data.materials.length){
+
+list.innerHTML=`
+
+<div class="card">
+
+<h3>📚 Noch keine Materialien</h3>
+
+<p class="muted">
+Hier erscheinen später die Lernmaterialien.
+</p>
+
+</div>
+
+`;
+
+return;
+
+}
+
+list.innerHTML=
+data.materials.map(m=>`
+
+<div class="list-item">
+
+<div class="list-left">
+
+<div class="avatar">📚</div>
+
+<div>
+
+<strong>${escapeHTML(m.title)}</strong>
+
+<div class="muted">
+${escapeHTML(m.subject || "Allgemein")}
+ · ${m.created}
+</div>
+
+</div>
+
+</div>
+
+<span class="badge badge-blue">
+Material
+</span>
+
+</div>
+
+`).join("");
+
+}
+
+
+/* =========================
+   AUFGABEN
+========================= */
+
+function openTaskModal(){
+
+openModal(
+"📝 Aufgabe erstellen",
+
+`
+
+<div class="form-group">
+<label>Titel</label>
+<input id="taskTitle"
+placeholder="z. B. Mathematik Aufgabe 3">
+</div>
+
+<div class="form-group">
+<label>Aufgabe</label>
+<textarea id="taskDescription"
+placeholder="Aufgabenstellung"></textarea>
+</div>
+
+<div class="form-group">
+<label>Fach</label>
+<input id="taskSubject"
+placeholder="Mathematik">
+</div>
+
+<button class="btn btn-primary full"
+onclick="createTask()">
+Aufgabe erstellen
+</button>
+
+`);
+
+}
+
+
+function createTask(){
+
+const title=
+document.getElementById("taskTitle")
+.value.trim();
+
+const description=
+document.getElementById("taskDescription")
+.value.trim();
+
+const subject=
+document.getElementById("taskSubject")
+.value.trim();
+
+if(!title || !description){
+
+alert("Bitte Titel und Aufgabe eingeben.");
+
+return;
+
+}
+
+data.tasks.push({
+
+id:Date.now().toString(),
+
+title,
+
+description,
+
+subject,
+
+done:false,
+
+created:new Date().toLocaleDateString("de-DE")
+
+});
+
+save();
+
+closeModal();
+
+renderAll();
+
+}
+
+
+function renderTasks(){
+
+const list=
+document.getElementById("tasksList");
+
+if(!data.tasks.length){
+
+list.innerHTML=`
+
+<div class="card">
+
+<h3>📝 Keine Aufgaben</h3>
+
+<p class="muted">
+Aktuell gibt es keine Aufgaben.
+</p>
+
+</div>
+
+`;
+
+return;
+
+}
+
+list.innerHTML=
+data.tasks.map(t=>`
+
+<div class="list-item">
+
+<div class="list-left">
+
+<div class="avatar">
+📝
+</div>
+
+<div>
+
+<strong>${escapeHTML(t.title)}</strong>
+
+<div class="muted">
+${escapeHTML(t.subject || "")}
+</div>
+
+</div>
+
+</div>
+
+<div>
+
+${
+currentUser.role==="student"
+
+?
+
+`<button class="btn ${
+t.done
+?"btn-success"
+:"btn-primary"
+}"
+onclick="toggleTask('${t.id}')">
+
+${t.done ? "✅ Erledigt":"Erledigen"}
+
+</button>`
+
+:
+
+`<span class="badge badge-purple">
+${t.created}
+</span>`
+
+}
+
+</div>
+
+</div>
+
+`).join("");
+
+}
+
+
+function toggleTask(id){
+
+const task=
+data.tasks.find(t=>t.id===id);
+
+if(!task)return;
+
+task.done=!task.done;
+
+save();
+
+renderAll();
+
+}
+
+
+/* =========================
+   NOTIZEN
+========================= */
+
+function openNoteModal(){
+
+openModal(
+"📒 Neue Notiz",
+
+`
+
+<div class="form-group">
+<label>Titel</label>
+<input id="noteTitle"
+placeholder="Titel">
+</div>
+
+<div class="form-group">
+<label>Notiz</label>
+<textarea id="noteText"
+placeholder="Schreibe hier deine Notiz..."></textarea>
+</div>
+
+<button class="btn btn-primary full"
+onclick="createNote()">
+Notiz speichern
+</button>
+
+`);
+
+}
+
+
+function createNote(){
+
+const title=
+document.getElementById("noteTitle")
+.value.trim();
+
+const text=
+document.getElementById("noteText")
+.value.trim();
+
+if(!title || !text){
+
+alert("Bitte Titel und Text eingeben.");
+
+return;
+
+}
+
+data.notes.push({
+
+id:Date.now().toString(),
+
+userId:currentUser.id,
+
+title,
+
+text,
+
+date:new Date().toLocaleDateString("de-DE")
+
+});
+
+save();
+
+closeModal();
+
+renderAll();
+
+}
+
+
+function renderNotes(){
+
+const list=
+document.getElementById("notesList");
+
+const notes=
+data.notes.filter(
+n=>n.userId===currentUser.id
+);
+
+if(!notes.length){
+
+list.innerHTML=`
+
+<div class="card">
+
+<h3>📒 Noch keine Notizen</h3>
+
+<p class="muted">
+Erstelle deine erste persönliche Notiz.
+</p>
+
+</div>
+
+`;
+
+return;
+
+}
+
+list.innerHTML=
+notes.map(n=>`
+
+<div class="card">
+
+<div class="section-header">
+
+<h3>📒 ${escapeHTML(n.title)}</h3>
+
+<button class="btn btn-danger"
+onclick="deleteNote('${n.id}')">
+🗑
+</button>
+
+</div>
+
+<p style="white-space:pre-wrap">
+${escapeHTML(n.text)}
+</p>
+
+<br>
+
+<span class="muted">${n.date}</span>
+
+</div>
+
+`).join("");
+
+}
+
+
+function deleteNote(id){
+
+if(!confirm("Notiz wirklich löschen?"))
+return;
+
+data.notes=
+data.notes.filter(n=>n.id!==id);
+
+save();
+
+renderAll();
+
+}
+
+
+/* =========================
+   ADMIN
+========================= */
+
+function openTeacherModal(){
+
+openModal(
+"👨‍🏫 Lehrer anlegen",
+
+`
+
+<div class="form-group">
+<label>Name</label>
+<input id="teacherName"
+placeholder="Max Mustermann">
+</div>
+
+<div class="form-group">
+<label>Benutzername / E-Mail</label>
+<input id="teacherUsername"
+placeholder="lehrer@schule.de">
+</div>
+
+<div class="form-group">
+<label>Passwort</label>
+<input id="teacherPassword"
+value="${generateCode(8)}">
+</div>
+
+<button class="btn btn-primary full"
+onclick="createTeacher()">
+Lehrer erstellen
+</button>
+
+`);
+
+}
+
+
+function createTeacher(){
+
+const name=
+document.getElementById("teacherName")
+.value.trim();
+
+const username=
+document.getElementById("teacherUsername")
+.value.trim();
+
+const password=
+document.getElementById("teacherPassword")
+.value;
+
+if(!name || !username || !password){
+
+alert("Bitte alle Felder ausfüllen.");
+
+return;
+
+}
+
+if(data.users.some(
+u=>u.username.toLowerCase()
+===username.toLowerCase()
+)){
+
+alert("Dieser Benutzername existiert bereits.");
+
+return;
+
+}
+
+data.users.push({
+
+id:Date.now().toString(),
+
+name,
+
+username,
+
+password,
+
+role:"teacher"
+
+});
+
+save();
+
+closeModal();
+
+renderAll();
+
+alert(
+"✅ Lehrer erstellt!\n\n"
++"Benutzername: "+username+"\n"
++"Passwort: "+password
+);
+
+}
+
+
+function renderAdmin(){
+
+if(currentUser.role!=="admin")
+return;
+
+const teachers=
+data.users.filter(u=>u.role==="teacher");
+
+const students=
+data.users.filter(u=>u.role==="student");
+
+document.getElementById("adminTeacherCount")
+.textContent=teachers.length;
+
+document.getElementById("adminClassCount")
+.textContent=data.classes.length;
+
+document.getElementById("adminStudentCount")
+.textContent=students.length;
+
+const table=
+document.getElementById("teacherTable");
+
+table.innerHTML=
+teachers.map(t=>`
+
+<tr>
+
+<td>
+<strong>${escapeHTML(t.name)}</strong>
+</td>
+
+<td>
+${escapeHTML(t.username)}
+</td>
+
+<td>
+${escapeHTML(t.password)}
+</td>
+
+<td>
+
+<button class="btn btn-danger"
+onclick="deleteTeacher('${t.id}')">
+Löschen
+</button>
+
+</td>
+
+</tr>
+
+`).join("");
+
+}
+
+
+function deleteTeacher(id){
+
+if(!confirm(
+"Lehrer wirklich löschen?"
+))
+return;
+
+data.users=
+data.users.filter(u=>u.id!==id);
+
+data.classes=
+data.classes.filter(c=>c.teacherId!==id);
+
+save();
+
+renderAll();
+
+}
+
+
+/* =========================
+   SCANNER
+========================= */
+
+async function startCamera(){
+
+try{
+
+cameraStream=
+await navigator.mediaDevices
+.getUserMedia({
+video:{
+facingMode:"environment"
+},
+audio:false
+});
+
+const video=
+document.getElementById("camera");
+
+video.srcObject=cameraStream;
+
+video.classList.remove("hidden");
+
+document.getElementById("scannerStart")
+.classList.add("hidden");
+
+document.getElementById("cameraControls")
+.classList.remove("hidden");
+
+}catch(error){
+
+alert(
+"Die Kamera konnte nicht geöffnet werden.\n\n"
++"Prüfe bitte die Browser-Berechtigung."
+);
+
+}
+
+}
+
+
+function takePhoto(){
+
+const video=
+document.getElementById("camera");
+
+const canvas=
+document.createElement("canvas");
+
+canvas.width=video.videoWidth;
+canvas.height=video.videoHeight;
+
+canvas
+.getContext("2d")
+.drawImage(
+video,
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+document.getElementById("scanImage")
+.src=
+canvas.toDataURL("image/jpeg",.9);
+
+document.getElementById("scanImage")
+.classList.remove("hidden");
+
+stopCamera();
+
+}
+
+
+function stopCamera(){
+
+if(cameraStream){
+
+cameraStream
+.getTracks()
+.forEach(track=>track.stop());
+
+cameraStream=null;
+
+}
+
+document.getElementById("camera")
+.classList.add("hidden");
+
+document.getElementById("cameraControls")
+.classList.add("hidden");
+
+document.getElementById("scannerStart")
+.classList.remove("hidden");
+
+}
+
+
+function loadImage(event){
+
+const file=
+event.target.files[0];
+
+if(!file)return;
+
+const reader=
+new FileReader();
+
+reader.onload=e=>{
+
+document.getElementById("scanImage")
+.src=e.target.result;
+
+document.getElementById("scanImage")
+.classList.remove("hidden");
+
+document.getElementById("scannerStart")
+.classList.add("hidden");
+
+};
+
+reader.readAsDataURL(file);
+
+}
+
+
+/* =========================
+   LERN-KI
+========================= */
+
+function askAI(){
+
+const input=
+document.getElementById("aiInput");
+
+const text=input.value.trim();
+
+if(!text)return;
+
+addMessage(text,"user");
+
+input.value="";
+
+setTimeout(()=>{
+
+const answer=
+generateAIAnswer(text);
+
+addMessage(answer,"ai");
+
+},400);
+
+}
+
+
+function addMessage(text,type){
+
+const messages=
+document.getElementById("chatMessages");
+
+const div=
+document.createElement("div");
+
+div.className=
+"message "+type;
+
+div.textContent=text;
+
+messages.appendChild(div);
+
+messages.scrollTop=
+messages.scrollHeight;
+
+}
+
+
+function generateAIAnswer(question){
+
+const q=question.toLowerCase();
+
+if(
+q.includes("photosynthese")
+||
+q.includes("photosynthese")
+){
+
+return "Photosynthese bedeutet vereinfacht: Pflanzen nutzen Lichtenergie, Wasser und Kohlenstoffdioxid, um Zucker aufzubauen. Dabei entsteht Sauerstoff. Merksatz: Licht + Wasser + CO₂ → Zucker + Sauerstoff.";
+
+}
+
+if(
+q.includes("brüche")
+||
+q.includes("bruchrechnung")
+||
+q.includes("bruch")
+){
+
+return "Bei Brüchen kannst du dir zuerst Zähler und Nenner anschauen. Beim Addieren müssen die Nenner gleich sein. Beispiel: 1/4 + 2/4 = 3/4. Beim Multiplizieren multiplizierst du Zähler mit Zähler und Nenner mit Nenner.";
+
+}
+
+if(
+q.includes("gleichung")
+){
+
+return "Bei einer Gleichung möchtest du die unbekannte Zahl herausfinden. Beispiel: x + 5 = 12. Ziehe auf beiden Seiten 5 ab: x = 7. Wichtig: Was du auf einer Seite machst, musst du auch auf der anderen Seite machen.";
+
+}
+
+if(
+q.includes("prozent")
+){
+
+return "Bei Prozentaufgaben hilft die Grundformel: Prozentwert = Grundwert × Prozentsatz ÷ 100. Beispiel: 20 % von 50 sind 10.";
+
+}
+
+if(
+q.includes("deutsch")
+){
+
+return "Beim Lernen in Deutsch hilft es, zuerst die Aufgabenstellung genau zu lesen. Markiere wichtige Wörter und arbeite die Aufgabe Schritt für Schritt ab.";
+
+}
+
+if(
+q.includes("mathe")
+||
+q.includes("mathematik")
+){
+
+return "Gerne helfe ich dir bei Mathematik. Schreibe mir die konkrete Aufgabe. Ich kann dir den Lösungsweg verständlich Schritt für Schritt erklären.";
+
+}
+
+return "Ich kann dir dabei helfen. Schreib die Aufgabe oder das Thema möglichst genau auf. Dann erkläre ich es dir einfach und Schritt für Schritt.";
+
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+function openModal(title,content){
+
+document.getElementById("modalTitle")
+.textContent=title;
+
+document.getElementById("modalContent")
+.innerHTML=content;
+
+document.getElementById("modal")
+.classList.add("show");
+
+}
+
+
+function closeModal(){
+
+document.getElementById("modal")
+.classList.remove("show");
+
+}
+
+
+/* =========================
+   ESCAPE
+========================= */
+
+function escapeHTML(value){
+
+return String(value)
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+if(localStorage.getItem("dark")==="true")
+document.body.classList.add("dark");
+
+const savedUser=
+localStorage.getItem("currentUser");
+
+if(savedUser){
+
+const user=
+data.users.find(
+u=>u.id===savedUser
+);
+
+if(user){
+
+currentUser=user;
+
+document.getElementById("loginPage")
+.style.display="none";
+
+document.getElementById("app")
+.style.display="block";
+
+setupUser();
+
+}
+
+}
+
+
+/* =========================
+   MODAL CLICK OUTSIDE
+========================= */
+
+document.getElementById("modal")
+.addEventListener("click",function(e){
+
+if(e.target===this)
+closeModal();
+
+});
+
+
+</script>
+
+</body>
+</html>
