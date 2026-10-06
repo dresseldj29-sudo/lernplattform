@@ -1,0 +1,264 @@
+rules_version = '2';
+
+service cloud.firestore {
+
+  match /databases/{database}/documents {
+
+
+    /* =====================================
+       HILFSFUNKTIONEN
+    ===================================== */
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+
+    function currentUser() {
+
+      return get(
+        /databases/$(database)/documents/users/$(request.auth.uid)
+      ).data;
+
+    }
+
+
+    function isTeacher() {
+
+      return signedIn()
+        && currentUser().role == "teacher";
+
+    }
+
+
+    function isStudent() {
+
+      return signedIn()
+        && currentUser().role == "student";
+
+    }
+
+
+    /* =====================================
+       USER
+    ===================================== */
+
+    match /users/{userId} {
+
+      /*
+        Jeder angemeldete Benutzer darf sein
+        eigenes Profil beim Registrieren erstellen.
+
+        Die Rolle darf nur teacher oder student sein.
+      */
+
+      allow create:
+        if signedIn()
+        && request.auth.uid == userId
+        && (
+          request.resource.data.role == "teacher"
+          ||
+          request.resource.data.role == "student"
+        );
+
+
+      allow read:
+        if signedIn()
+        && request.auth.uid == userId;
+
+
+      allow update:
+        if signedIn()
+        && request.auth.uid == userId;
+
+
+      allow delete:
+        if false;
+    }
+
+
+    /* =====================================
+       KLASSEN
+    ===================================== */
+
+    match /classes/{classId} {
+
+
+      /*
+        Lehrer darf eigene Klassen erstellen.
+      */
+
+      allow create:
+        if isTeacher()
+        && request.resource.data.teacherId
+           == request.auth.uid;
+
+
+      /*
+        Lehrer darf seine Klassen lesen.
+        Schüler darf seine Klasse lesen.
+      */
+
+      allow read:
+        if isTeacher()
+        && resource.data.teacherId
+           == request.auth.uid
+
+        ||
+
+        isStudent()
+        && resource.data.teacherId
+           == currentUser().teacherId;
+
+
+      /*
+        Lehrer darf nur eigene Klassen ändern.
+      */
+
+      allow update:
+        if isTeacher()
+        && resource.data.teacherId
+           == request.auth.uid
+        && request.resource.data.teacherId
+           == request.auth.uid;
+
+
+      allow delete:
+        if isTeacher()
+        && resource.data.teacherId
+           == request.auth.uid;
+    }
+
+
+    /* =====================================
+       SCHÜLER EINLADUNGEN / CODES
+    ===================================== */
+
+    match /studentInvites/{inviteId} {
+
+
+      /*
+        Schüler muss einen Code nachschlagen
+        können, bevor er ein Konto hat.
+
+        Deshalb darf das einzelne Invite-Dokument
+        gelesen werden.
+
+        Der Code selbst ist der geheime Zugang.
+      */
+
+      allow read:
+        if true;
+
+
+      /*
+        Lehrer erstellt Schüler.
+      */
+
+      allow create:
+        if isTeacher()
+        && request.resource.data.teacherId
+           == request.auth.uid;
+
+
+      /*
+        Schüler beansprucht seinen Code.
+
+        Der Code kann danach nicht noch einmal
+        beansprucht werden.
+      */
+
+      allow update:
+        if signedIn()
+        && resource.data.status == "open"
+        && resource.data.claimedBy == null
+        && request.resource.data.status == "claimed"
+        && request.resource.data.claimedBy
+           == request.auth.uid;
+
+
+      /*
+        Lehrer darf seine eigenen Einladungen löschen.
+      */
+
+      allow delete:
+        if isTeacher()
+        && resource.data.teacherId
+           == request.auth.uid;
+    }
+
+
+    /* =====================================
+       MATERIALIEN
+       Vorbereitung für den nächsten Schritt
+    ===================================== */
+
+    match /materials/{materialId} {
+
+      allow read:
+        if signedIn();
+
+
+      allow create:
+        if isTeacher()
+        && request.resource.data.teacherId
+           == request.auth.uid;
+
+
+      allow update, delete:
+        if isTeacher()
+        && resource.data.teacherId
+           == request.auth.uid;
+    }
+
+
+    /* =====================================
+       AUFGABEN
+       Vorbereitung für den nächsten Schritt
+    ===================================== */
+
+    match /tasks/{taskId} {
+
+      allow read:
+        if signedIn();
+
+
+      allow create:
+        if isTeacher()
+        && request.resource.data.teacherId
+           == request.auth.uid;
+
+
+      allow update, delete:
+        if isTeacher()
+        && resource.data.teacherId
+           == request.auth.uid;
+    }
+
+
+    /* =====================================
+       NOTIZEN
+       ===================================== */
+
+    match /notes/{noteId} {
+
+      allow read, create, update, delete:
+        if signedIn()
+        && request.auth.uid
+           == resource.data.ownerId;
+    }
+
+
+    /* =====================================
+       STANDARD:
+       ALLES ANDERE VERBIETEN
+    ===================================== */
+
+    match /{document=**} {
+
+      allow read, write: if false;
+
+    }
+
+  }
+}
